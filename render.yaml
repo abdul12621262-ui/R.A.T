@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: rat-signaling
+    env: rust
+    buildCommand: cargo build --release -p rat-signaling
+    startCommand: ./target/release/rat-signaling
+    envVars:
+      - key: PORT
+        value: 4899
+    plan: free
