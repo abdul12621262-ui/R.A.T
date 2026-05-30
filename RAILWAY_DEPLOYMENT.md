@@ -10,9 +10,10 @@ This guide explains how to deploy the R.A.T signaling server to Railway for free
 
 ## Step 1: Prepare Your Repository
 
-The deployment files are already created in `server/signaling/`:
-- `Dockerfile` - Container configuration
+The deployment files are already created in the project root:
+- `nixpacks.toml` - Nixpacks build configuration (Railway's automatic builder)
 - `railway.toml` - Railway-specific settings
+- `Dockerfile` - Alternative Docker build configuration
 - `.dockerignore` - Files to exclude from Docker build
 
 ## Step 2: Deploy to Railway
@@ -35,9 +36,8 @@ cd d:\R.A.T
 railway init
 ```
 
-4. Deploy from the signaling directory:
+4. Deploy from the project root:
 ```bash
-cd server/signaling
 railway up
 ```
 
@@ -92,8 +92,9 @@ Edit `apps/ui/src/agent_bridge.rs` lines 33 and 50, replace the placeholder with
 
 ### Build Fails
 - Check Railway logs in the dashboard
-- Ensure Dockerfile is in `server/signaling/` directory
+- Ensure nixpacks.toml is in the project root
 - Verify Cargo.toml dependencies are correct
+- Make sure the build command in nixpacks.toml matches your project structure
 
 ### Connection Refused
 - Ensure port 4899 is exposed (configured in railway.toml)

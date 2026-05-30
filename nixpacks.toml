@@ -1,0 +1,12 @@
+[phases.build]
+cmds = ["cargo build --release --bin rat-signaling"]
+
+[phases.start]
+cmds = ["./target/release/rat-signaling"]
+
+[static]
+# Expose port 4899 for signaling
+port = 4899
+
+[build.env]
+RUSTFLAGS = "-C target-cpu=native"

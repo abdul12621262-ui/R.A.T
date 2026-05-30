@@ -1,7 +1,5 @@
 [build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
-dockerContext = "."
+builder = "NIXPACKS"
 
 [deploy]
 startCommand = "/app/rat-signaling"
@@ -14,3 +12,4 @@ restartPolicyMaxRetries = 10
 name = "signaling"
 protocol = "TCP"
 internalPort = 4899
+port = 4899
