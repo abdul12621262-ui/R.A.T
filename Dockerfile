@@ -1,5 +1,5 @@
 # Build stage
-FROM rust:nightly-slim as builder
+FROM rust:1.83-slim as builder
 
 WORKDIR /app
 
