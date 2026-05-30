@@ -9,7 +9,7 @@ COPY crates/ ./crates/
 COPY server/ ./server/
 
 # Build the signaling server
-RUN cargo build --release --bin rat-signaling
+RUN cargo build --release -p rat-signaling
 
 # Runtime stage
 FROM debian:bookworm-slim
