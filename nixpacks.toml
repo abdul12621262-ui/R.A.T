@@ -1,9 +1,10 @@
 [phases.build]
-cmd = "cargo build --release -p rat-signaling"
+cmds = [
+  "cargo build --release -p rat-signaling"
+]
 
 [phases.start]
 cmd = "./target/release/rat-signaling"
 
 [static]
-# Expose port 4899 for signaling
 port = 4899

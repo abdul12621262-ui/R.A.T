@@ -11,7 +11,7 @@ members = [
     "server/relay",
     "apps/ui",
 ]
-default-members = ["apps/ui", "server/signaling"]
+default-members = ["server/signaling"]
 
 [workspace.package]
 version = "0.1.0"
