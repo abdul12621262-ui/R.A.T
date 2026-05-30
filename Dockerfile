@@ -7,6 +7,7 @@ WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 COPY crates/ ./crates/
 COPY server/ ./server/
+COPY apps/ ./apps/
 
 # Build the signaling server
 RUN cargo build --release -p rat-signaling
