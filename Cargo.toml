@@ -30,6 +30,7 @@ thiserror = "1"
 uuid = { version = "1", features = ["v4"] }
 futures-util = "0.3"
 dashmap = "6"
+getrandom = "0.2"
 rat-protocol = { path = "crates/protocol" }
 rat-crypto = { path = "crates/crypto" }
 rat-capture = { path = "crates/capture" }
