@@ -13,3 +13,4 @@ name = "signaling"
 protocol = "TCP"
 internalPort = 4899
 port = 4899
+healthcheckPath = "/health"
