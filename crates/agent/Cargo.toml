@@ -1,0 +1,21 @@
+[package]
+name = "rat-agent"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "rat-agent"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+arboard = "3"
+rat-capture = { workspace = true }
+rat-crypto = { workspace = true }
+rat-input = { workspace = true }
+rat-protocol = { workspace = true }
+rat-transport = { workspace = true }
+sysinfo = "0.33"
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

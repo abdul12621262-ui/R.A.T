@@ -1,0 +1,15 @@
+[package]
+name = "rat-transport"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+futures-util = { workspace = true }
+rat-protocol = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
+tracing = { workspace = true }
+url = "2"
+uuid = { workspace = true }

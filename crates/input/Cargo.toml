@@ -1,0 +1,12 @@
+[package]
+name = "rat-input"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+enigo = "0.2"
+rat-protocol = { workspace = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+core-graphics = "0.24"

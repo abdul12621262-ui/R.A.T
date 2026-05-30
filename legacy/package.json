@@ -1,0 +1,17 @@
+{
+  "name": "AetherMod-custom-desktop",
+  "version": "1.0.0",
+  "description": "Premium lightweight AnyDesk-like app with 100% native OS control, zero-Electron",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5"
+  },
+  "author": "Antigravity",
+  "license": "MIT"
+}

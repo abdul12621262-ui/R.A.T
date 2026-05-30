@@ -1,0 +1,22 @@
+[package]
+name = "rat-ui"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "rat"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+arboard = "3"
+rat-agent = { workspace = true }
+rat-protocol = { workspace = true }
+slint = "1.9"
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+image = { version = "0.25", default-features = false, features = ["jpeg"] }
+
+[build-dependencies]
+slint-build = "1.9"

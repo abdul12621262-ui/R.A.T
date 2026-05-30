@@ -1,0 +1,251 @@
+import { Button, VerticalBox, HorizontalBox, LineEdit, ScrollView } from "std-widgets.slint";
+
+component HomeScreen {
+    in-out property <string> join-code;
+    callback create-session();
+    callback join-session();
+
+    VerticalBox {
+        padding: 32px;
+        spacing: 16px;
+        Text { text: "R.A.T"; font-size: 28px; color: #58a6ff; }
+        Text { text: "Native remote desktop — no Electron"; color: #8b949e; }
+        Rectangle { height: 24px; }
+        Text { text: "Admin — create session code"; color: #c9d1d9; font-weight: 700; }
+        Button { text: "Create Connection Code"; clicked => { root.create-session(); } }
+        Rectangle { height: 16px; }
+        Text { text: "Joiner — enter session code"; color: #c9d1d9; font-weight: 700; }
+        LineEdit { placeholder-text: "Session code (###-###)"; text <=> join-code; }
+        Button { text: "Link Device"; clicked => { root.join-session(); } }
+    }
+}
+
+component AdminWaitScreen {
+    in-out property <string> session-code;
+    in-out property <string> status-text;
+    callback copy-code();
+    callback disconnect();
+
+    VerticalBox {
+        padding: 32px;
+        spacing: 12px;
+        Text { text: "Share this code with the joiner"; color: #8b949e; }
+        Text { text: session-code; font-size: 48px; color: #3fb950; horizontal-alignment: center; }
+        Text { text: status-text; color: #8b949e; }
+        HorizontalBox {
+            spacing: 8px;
+            Button { text: "Copy Code"; clicked => { root.copy-code(); } }
+            Button { text: "Cancel"; clicked => { root.disconnect(); } }
+        }
+    }
+}
+
+component AdminViewScreen {
+    in property <string> session-code;
+    in-out property <string> status-text;
+    in property <bool> remote-active;
+    in-out property <image> remote-frame;
+    in-out property <string> chat-input;
+    in-out property <string> chat-log;
+    in-out property <string> terminal-log;
+    in-out property <string> terminal-input;
+    in-out property <string> file-path;
+    in-out property <string> file-listing;
+    in-out property <string> stats-text;
+    in-out property <int> admin-tab;
+    callback disconnect();
+    callback send-chat();
+    callback send-terminal();
+    callback browse-files();
+    callback refresh-stats();
+    callback mouse-move(float, float);
+    callback mouse-click(string, bool);
+
+    VerticalBox {
+        padding: 8px;
+        spacing: 8px;
+        HorizontalBox {
+            Text { text: "Session: " + session-code; color: #58a6ff; }
+            Rectangle { horizontal-stretch: 1; }
+            Text { text: status-text; color: #8b949e; }
+            Button { text: "Disconnect"; clicked => { root.disconnect(); } }
+        }
+        HorizontalBox {
+            spacing: 4px;
+            Button { text: "Screen"; clicked => { admin-tab = 0; } }
+            Button { text: "Files"; clicked => { admin-tab = 1; } }
+            Button { text: "Terminal"; clicked => { admin-tab = 2; } }
+            Button { text: "Stats"; clicked => { admin-tab = 3; refresh-stats(); } }
+            Button { text: "Chat"; clicked => { admin-tab = 4; } }
+        }
+        Rectangle {
+            vertical-stretch: 1;
+            background: #161b22;
+            border-radius: 8px;
+            if admin-tab == 0: TouchArea {
+                moved => { root.mouse-move(self.mouse-x / 1px, self.mouse-y / 1px); }
+                clicked => { root.mouse-click("left", false); }
+                double-clicked => { root.mouse-click("left", true); }
+                if remote-active: Image {
+                    source: remote-frame;
+                    width: 100%;
+                    height: 100%;
+                    image-fit: contain;
+                }
+                if !remote-active: Text {
+                    text: "Waiting for joiner screen...";
+                    color: #8b949e;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+            if admin-tab == 1: VerticalBox {
+                padding: 8px;
+                HorizontalBox {
+                    LineEdit { text <=> file-path; min-width: 400px; }
+                    Button { text: "Browse"; clicked => { root.browse-files(); } }
+                }
+                ScrollView {
+                    Text { text: file-listing; color: #c9d1d9; wrap: word-wrap; }
+                }
+            }
+            if admin-tab == 2: VerticalBox {
+                padding: 8px;
+                ScrollView {
+                    vertical-stretch: 1;
+                    Text { text: terminal-log; color: #7ee787; wrap: word-wrap; }
+                }
+                HorizontalBox {
+                    LineEdit { text <=> terminal-input; min-width: 400px; }
+                    Button { text: "Run"; clicked => { root.send-terminal(); } }
+                }
+            }
+            if admin-tab == 3: VerticalBox {
+                padding: 16px;
+                Text { text: stats-text; color: #c9d1d9; wrap: word-wrap; }
+            }
+            if admin-tab == 4: VerticalBox {
+                padding: 8px;
+                ScrollView {
+                    vertical-stretch: 1;
+                    Text { text: chat-log; color: #8b949e; wrap: word-wrap; }
+                }
+                HorizontalBox {
+                    LineEdit { text <=> chat-input; min-width: 300px; }
+                    Button { text: "Send"; clicked => { root.send-chat(); } }
+                }
+            }
+        }
+    }
+}
+
+component JoinerScreen {
+    in-out property <string> status-text;
+    callback disconnect();
+
+    VerticalBox {
+        padding: 32px;
+        spacing: 12px;
+        Text { text: "You are sharing this device"; color: #f0883e; font-size: 20px; }
+        Text { text: status-text; color: #8b949e; }
+        Text { text: "Remote control is active. Use Stop Sharing to disconnect immediately."; color: #8b949e; wrap: word-wrap; }
+        Button { text: "Stop Sharing (Kill Switch)"; clicked => { root.disconnect(); } }
+    }
+}
+
+component ConsentScreen {
+    callback accept();
+    callback deny();
+
+    VerticalBox {
+        padding: 48px;
+        spacing: 16px;
+        Text { text: "Remote control request"; font-size: 24px; color: #f85149; }
+        Text {
+            text: "An admin wants to view and control this computer. Only accept if you trust them.";
+            color: #c9d1d9;
+            wrap: word-wrap;
+        }
+        HorizontalBox {
+            spacing: 12px;
+            Button { text: "Accept"; clicked => { root.accept(); } }
+            Button { text: "Deny"; clicked => { root.deny(); } }
+        }
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "R.A.T Remote Desktop";
+    preferred-width: 1100px;
+    preferred-height: 720px;
+    background: #0d1117;
+
+    in-out property <int> screen: 0;
+    in-out property <string> session-code: "";
+    in-out property <string> join-code: "";
+    in-out property <string> status-text: "Ready";
+    in-out property <image> remote-frame;
+    in-out property <bool> remote-active: false;
+    in-out property <string> chat-input: "";
+    in-out property <string> chat-log: "";
+    in-out property <string> terminal-log: "";
+    in-out property <string> terminal-input: "";
+    in-out property <string> file-path: "";
+    in-out property <string> file-listing: "";
+    in-out property <string> stats-text: "";
+    in-out property <int> admin-tab: 0;
+
+    callback create-session();
+    callback join-session();
+    callback copy-code();
+    callback disconnect();
+    callback consent-accept();
+    callback consent-deny();
+    callback send-chat();
+    callback send-terminal();
+    callback browse-files();
+    callback refresh-stats();
+    callback mouse-move(float, float);
+    callback mouse-click(string, bool);
+
+    if screen == 0: HomeScreen {
+        join-code <=> root.join-code;
+        create-session => { root.create-session(); }
+        join-session => { root.join-session(); }
+    }
+    if screen == 1: AdminWaitScreen {
+        session-code <=> root.session-code;
+        status-text <=> root.status-text;
+        copy-code => { root.copy-code(); }
+        disconnect => { root.disconnect(); }
+    }
+    if screen == 2: AdminViewScreen {
+        session-code: root.session-code;
+        status-text <=> root.status-text;
+        remote-active: root.remote-active;
+        remote-frame <=> root.remote-frame;
+        chat-input <=> root.chat-input;
+        chat-log <=> root.chat-log;
+        terminal-log <=> root.terminal-log;
+        terminal-input <=> root.terminal-input;
+        file-path <=> root.file-path;
+        file-listing <=> root.file-listing;
+        stats-text <=> root.stats-text;
+        admin-tab <=> root.admin-tab;
+        disconnect => { root.disconnect(); }
+        send-chat => { root.send-chat(); }
+        send-terminal => { root.send-terminal(); }
+        browse-files => { root.browse-files(); }
+        refresh-stats => { root.refresh-stats(); }
+        mouse-move(x, y) => { root.mouse-move(x, y); }
+        mouse-click(btn, dbl) => { root.mouse-click(btn, dbl); }
+    }
+    if screen == 3: JoinerScreen {
+        status-text <=> root.status-text;
+        disconnect => { root.disconnect(); }
+    }
+    if screen == 4: ConsentScreen {
+        accept => { root.consent-accept(); }
+        deny => { root.consent-deny(); }
+    }
+}

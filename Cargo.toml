@@ -1,0 +1,43 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/protocol",
+    "crates/crypto",
+    "crates/capture",
+    "crates/input",
+    "crates/transport",
+    "crates/agent",
+    "server/signaling",
+    "server/relay",
+    "apps/ui",
+]
+default-members = ["apps/ui", "server/signaling"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["R.A.T"]
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1"
+thiserror = "1"
+uuid = { version = "1", features = ["v4"] }
+futures-util = "0.3"
+dashmap = "6"
+rat-protocol = { path = "crates/protocol" }
+rat-crypto = { path = "crates/crypto" }
+rat-capture = { path = "crates/capture" }
+rat-input = { path = "crates/input" }
+rat-transport = { path = "crates/transport" }
+rat-agent = { path = "crates/agent" }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherMod Remote OS Console</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Load modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Outfit:wght@300;400;600;800&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Background Aurora Glow Blobs -->
+  <div class="aurora-glow blob-1"></div>
+  <div class="aurora-glow blob-2"></div>
+  <div class="aurora-glow blob-3"></div>
+
+  <!-- Global Application Wrapper -->
+  <main id="app-container" class="glass-base">
+
+    <!-- ==================== SCREEN 1: LANDING ENTRY ==================== -->
+    <section id="screen-landing" class="active-screen">
+      <header class="app-hero">
+        <div class="logo-area">
+          <svg class="logo-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M2 17L12 22L22 17" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M2 12L12 17L22 12" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <defs>
+              <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#00f2fe" />
+                <stop offset="1" stop-color="#4facfe" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <h1>Aether<span>Link</span></h1>
+        </div>
+        <p class="subtitle">Ultra-lightweight real-time Remote Desktop & Collaboration shell</p>
+      </header>
+
+      <div class="portal-grid">
+        <!-- Panel A: Admin Console (Generate Code) -->
+        <div class="portal-card controller-card glass-panel">
+          <div class="card-glow"></div>
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <h2>Control Center</h2>
+          <p>Generate a connection token to assume remote control and monitor a host client device.</p>
+
+          <button id="btn-create-session" class="action-btn cyan-glow">
+            <span>Establish Connection Node</span>
+          </button>
+
+          <!-- Waiting State Panel -->
+          <div id="admin-pairing-hub" class="pairing-panel hide">
+            <p class="label">Share Connection Code</p>
+            <div class="code-box">
+              <span id="txt-session-code">--- ---</span>
+              <button id="btn-copy-code" title="Copy Code">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="radar-box">
+              <div class="radar-ping"></div>
+              <p>Awaiting client connection request...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel B: Client Console (Enter Code) -->
+        <div class="portal-card host-card glass-panel">
+          <div class="card-glow"></div>
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+          </div>
+          <h2>Allow Access</h2>
+          <p>Authorize a trusted controller to securely link to your device and view/control your desktop.</p>
+
+          <div class="input-group">
+            <label for="input-target-ip">Remote Console Network IP</label>
+            <input type="text" id="input-target-ip" value="localhost:4899" placeholder="e.g. 192.168.1.15:4899">
+          </div>
+
+          <div class="input-group">
+            <label for="input-session-code">Secure Link PIN</label>
+            <input type="text" id="input-session-code" placeholder="000-000" maxlength="7">
+          </div>
+
+          <button id="btn-join-session" class="action-btn purple-glow">
+            <span>Link Device Terminal</span>
+          </button>
+
+          <p id="txt-link-error" class="error-msg hide"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 2: ADMIN / CONTROLLER TERMINAL ==================== -->
+    <section id="screen-admin" class="dashboard-screen hide">
+      <header class="dashboard-header">
+        <div class="header-logo">
+          <svg class="logo-svg-small" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          <h2>AetherMod <span>Admin Panel</span></h2>
+        </div>
+        <div class="session-stats">
+          <div class="stat-badge"><span class="indicator cyan"></span> Ping: <span id="admin-ping">-- ms</span></div>
+          <div class="stat-badge">Client: <span id="admin-client-name">Loading...</span></div>
+          <div class="stat-badge">Session: <span id="admin-code-indicator">---</span></div>
+          <button id="btn-admin-disconnect" class="disconnect-btn">Terminate Session</button>
+        </div>
+      </header>
+
+      <div class="admin-grid">
+        <!-- Left Area: Active OS Viewport -->
+        <div class="viewport-card glass-panel">
+          <div class="viewport-header">
+            <h3>Remote Desktop Monitor</h3>
+            <div class="viewport-actions">
+              <button id="btn-toggle-control" class="v-action-btn active"
+                title="Remote Interaction (Enable Keyboard/Mouse)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+                <span>Control Mode</span>
+              </button>
+              <button id="btn-admin-draw" class="v-action-btn" title="Laser Pointer / Annotation Marker">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                <span>Annotate</span>
+              </button>
+              <button id="btn-admin-clear-draw" class="v-action-btn icon-only" title="Clear drawings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="viewport-wrapper" id="viewport-wrapper">
+            <!-- Screen Stream Target -->
+            <video id="remote-video" autoplay playsinline></video>
+            <!-- Interaction Canvas Cover (Ripples & Drawing overlay) -->
+            <canvas id="viewport-canvas"></canvas>
+            <div class="cursor-pointer" id="admin-virtual-cursor"></div>
+
+            <div id="viewport-fallback" class="viewport-fallback">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+              <p>Awaiting primary screen media capture feed from Client...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Area: Control Tab Workspace -->
+        <div class="workspace-card glass-panel">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="tab-terminal">PowerShell</button>
+            <button class="tab-btn" data-tab="tab-files">File Explorer</button>
+            <button class="tab-btn" data-tab="tab-stats">System Stats</button>
+            <button class="tab-btn" data-tab="tab-chat">Chat & Clip</button>
+          </div>
+
+          <div class="tab-content-area">
+            <!-- TAB 1: PowerShell Terminal -->
+            <div id="tab-terminal" class="tab-content active">
+              <div class="terminal-wrapper">
+                <div class="terminal-body" id="terminal-output">
+                  <div class="term-line system-line">AetherMod Powershell Console [Version 1.0.0]</div>
+                  <div class="term-line system-line">Connecting to remote system subprocesses... Connected!</div>
+                  <div class="term-line info-line">Type OS command lines (e.g. sysinfo, ipconfig, ls, dir) below:</div>
+                </div>
+                <div class="terminal-input-row">
+                  <span class="prompt">PS C:\></span>
+                  <input type="text" id="terminal-input" placeholder="Enter shell command...">
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: File Explorer -->
+            <div id="tab-files" class="tab-content">
+              <div class="file-explorer-wrapper">
+                <!-- Breadcrumbs & Navigation -->
+                <div class="explorer-header">
+                  <button id="btn-file-up" title="Up Directory">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 15l-6-6-6 6" />
+                    </svg>
+                  </button>
+                  <span id="txt-current-path">C:\</span>
+                  <button id="btn-file-refresh" title="Refresh folder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Split view: Directory index / Editor -->
+                <div class="explorer-body">
+                  <div class="file-list" id="explorer-file-list">
+                    <!-- Directory item row injected here -->
+                  </div>
+
+                  <div class="file-editor-box hide" id="explorer-editor-box">
+                    <div class="editor-header">
+                      <span id="editor-filename">editing.txt</span>
+                      <button id="btn-save-file">Save Edit</button>
+                      <button id="btn-close-editor">Close</button>
+                    </div>
+                    <textarea id="explorer-textarea"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: System Stats -->
+            <div id="tab-stats" class="tab-content">
+              <div class="stats-wrapper">
+                <h3>System Information Summary</h3>
+                <div class="gauges-grid">
+                  <!-- CPU Gauge -->
+                  <div class="gauge-card">
+                    <h4>CPU Usage</h4>
+                    <div class="radial-gauge">
+                      <svg class="radial-svg" viewBox="0 0 100 100">
+                        <circle class="bg" cx="50" cy="50" r="40" />
+                        <circle class="meter" id="gauge-cpu-circle" cx="50" cy="50" r="40" stroke-dasharray="251"
+                          stroke-dashoffset="251" />
+                      </svg>
+                      <span class="value" id="gauge-cpu-val">0%</span>
+                    </div>
+                  </div>
+
+                  <!-- Memory Gauge -->
+                  <div class="gauge-card">
+                    <h4>Memory Load</h4>
+                    <div class="radial-gauge">
+                      <svg class="radial-svg" viewBox="0 0 100 100">
+                        <circle class="bg" cx="50" cy="50" r="40" />
+                        <circle class="meter" id="gauge-mem-circle" cx="50" cy="50" r="40" stroke-dasharray="251"
+                          stroke-dashoffset="251" />
+                      </svg>
+                      <span class="value" id="gauge-mem-val">0%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="stats-table">
+                  <div class="stat-row"><strong>Hostname:</strong> <span id="stat-hostname">--</span></div>
+                  <div class="stat-row"><strong>OS Details:</strong> <span id="stat-os">--</span></div>
+                  <div class="stat-row"><strong>Architecture:</strong> <span id="stat-arch">--</span></div>
+                  <div class="stat-row"><strong>Processor Model:</strong> <span id="stat-cpu">--</span></div>
+                  <div class="stat-row"><strong>CPU Cores:</strong> <span id="stat-cores">--</span></div>
+                  <div class="stat-row"><strong>Physical RAM:</strong> <span id="stat-ram">-- GB</span></div>
+                  <div class="stat-row"><strong>System Uptime:</strong> <span id="stat-uptime">--</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: Collaborative Chat & Clipboard -->
+            <div id="tab-chat" class="tab-content">
+              <div class="chat-wrapper">
+                <div class="clipboard-hud glass-inner">
+                  <h4>Physical Clipboard Synchronizer</h4>
+                  <div class="clip-actions">
+                    <button id="btn-clip-read" class="action-btn-sm">
+                      <span>Fetch Admin Clipboard</span>
+                    </button>
+                    <button id="btn-clip-write" class="action-btn-sm">
+                      <span>Sync Text to Client OS</span>
+                    </button>
+                  </div>
+                  <textarea id="txt-clipboard-input"
+                    placeholder="Type text here to synchronize physical clipboards..."></textarea>
+                </div>
+
+                <div class="chat-hud">
+                  <div class="chat-messages" id="chat-messages-box">
+                    <div class="msg system">Encrypted connection active. Chat securely.</div>
+                  </div>
+                  <div class="chat-input-row">
+                    <input type="text" id="chat-input" placeholder="Type direct text message...">
+                    <button id="btn-send-message">Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: CLIENT / HOST TERMINAL LINK ==================== -->
+    <section id="screen-client" class="dashboard-screen client-hud-view hide">
+      <div class="client-layout">
+
+        <!-- Pulsing Connection HUD Card -->
+        <div class="client-control-card glass-panel">
+          <div class="shield-orb-glow"></div>
+
+          <div class="shield-icon">
+            <svg class="radar-pulse-anim" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+
+          <h2>Remote Console Stream Active</h2>
+          <p class="status-meta">Linked Session Code: <span id="client-code-indicator">--- ---</span></p>
+          <div class="stats-pills">
+            <div class="pill">ADMIN ACTIVE</div>
+            <div class="pill animate-pulse">STREAMING</div>
+          </div>
+
+          <div class="client-info-box glass-inner">
+            <p>Your physical screen display, mouse control, keyboard actions, physical folder directory index, and
+              system terminal command shell are securely shared with the remote administrator.</p>
+          </div>
+
+          <!-- Direct Chat panel on Client dashboard -->
+          <div class="client-chat-box glass-inner">
+            <h4>Live Administrator Chat</h4>
+            <div class="chat-messages client-msg-box" id="client-chat-messages">
+              <div class="msg system">Direct session communication channel online.</div>
+            </div>
+            <div class="chat-input-row">
+              <input type="text" id="client-chat-input" placeholder="Type message to administrator...">
+              <button id="btn-client-send-message">Send</button>
+            </div>
+          </div>
+
+          <!-- Pulsing Red safety Kill Switch -->
+          <button id="btn-client-kill" class="kill-btn red-glow">
+            <span>DISCONNECT & STOP ACCESS (ESC)</span>
+          </button>
+        </div>
+
+        <!-- Scrollable live control operation feed -->
+        <div class="client-log-card glass-panel">
+          <div class="log-header">
+            <h3>Remote Action Execution Feed</h3>
+            <span class="pulse-red"></span>
+          </div>
+          <div class="log-feed" id="client-activity-log">
+            <div class="log-line"><span>[17:25:01]</span> System initialized loopback listeners on port 4899</div>
+            <div class="log-line"><span>[17:25:05]</span> Local network peer handshake established</div>
+            <div class="log-line system"><span>[17:25:06]</span> Successfully synchronized native PowerShell OS control
+              assemblies</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- External Sockets API -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Main application script -->
+  <script src="renderer.js"></script>
+</body>
+
+</html>

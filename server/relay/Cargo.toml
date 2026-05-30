@@ -1,0 +1,15 @@
+[package]
+name = "rat-relay"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "rat-relay"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+rat-protocol = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

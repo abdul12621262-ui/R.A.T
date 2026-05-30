@@ -1,0 +1,3 @@
+# Use D: drive for toolchain when C: is low on space (see build.ps1)
+[toolchain]
+channel = "stable"
