@@ -1,0 +1,20 @@
+name: rat-signaling
+services:
+  - name: signaling
+    type: web
+    ports:
+      - port: 4899
+        protocol: tcp
+    env:
+      - name: PORT
+        value: "4899"
+    build:
+      type: dockerfile
+      dockerfile: Dockerfile
+    instance_type: nano
+    regions:
+      - was
+    healthcheck:
+      port: 4899
+      path: /health
+      protocol: http
